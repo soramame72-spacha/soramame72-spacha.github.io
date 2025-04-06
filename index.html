@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>霊夢の賽銭ゲーム</title>
+  <style>
+    body {
+      text-align: center;
+      background-color: #fffbe6;
+      font-family: 'Arial', sans-serif;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    #reimu {
+      width: 200px;
+      margin: 20px auto;
+    }
+    #saisenbako {
+      width: 150px;
+      margin: 10px auto;
+      position: relative; /* 位置を相対的に指定 */
+    }
+    #message {
+      margin: 10px;
+      font-size: 18px;
+      color: #c00;
+    }
+    #coin-button {
+      padding: 10px 20px;
+      font-size: 20px;
+      background-color: gold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #coin-count, #cps {
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    /* コインアニメーション用 */
+    .coin {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: gold;
+      border-radius: 50%;
+      opacity: 0;
+      animation: throwCoin 1s forwards; /* アニメーションを適用 */
+    }
+
+    @keyframes throwCoin {
+      0% {
+        top: 50px; /* ボタンの位置 */
+        left: 50%; 
+        transform: translateX(-50%) scale(1); /* 中心に配置 */
+        opacity: 1;
+      }
+      50% {
+        top: 100px; /* 中間地点 */
+        left: 52%;
+        transform: translateX(-50%) scale(1.2); /* 少し拡大 */
+      }
+      100% {
+        top: 150px; /* 賽銭箱の位置 */
+        left: 50%;
+        transform: translateX(-50%) scale(1);
+        opacity: 0; /* アニメーション後に消える */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>霊夢に賽銭を投げよう！</h1>
+
+  <img id="reimu" src="reimu_normal.png" alt="霊夢の表情">
+  <br>
+  <img id="saisenbako" src="saisen.png" alt="賽銭箱">
+
+  <div id="message">賽銭まだ？</div>
+  <button id="coin-button">賽銭を投げる！</button>
+  <div id="coin-count">賽銭の数: 0</div>
+  <div id="cps">CPS: 0</div>
+
+  <footer>
+    霊夢立ち絵: <a href="https://twitter.com/_Hoshi_Ringo_" target="_blank">星りんご (@_Hoshi_Ringo_)</a>
+  </footer>
+
+  <audio id="coin-sound">
+  <source src="https://freesound.org/data/previews/341/341695_3248244-lq.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const messageDiv = document.getElementById("message");
+    const coinCountDiv = document.getElementById("coin-count");
+    const cpsDiv = document.getElementById("cps");
+    const coinButton = document.getElementById("coin-button");
+    const coinSound = document.getElementById("coin-sound");
+    const reimuImg = document.getElementById("reimu");
+    const saisenBako = document.getElementById("saisenbako");
+
+    let coinCount = 0;
+    let clickTimes = [];
+    let lastTouch = 0;
+
+    const reimuFaces = {
+      normal: "reimu_normal.png",
+      happy: "reimu_happy.png",
+      excited: "reimu_excited.png",
+      angry: "reimu_angry.png"
+    };
+
+    const saisenLines = [
+      { count: 0, line: "賽銭まだ？", face: "normal" },
+      { count: 5, line: "ちょっとは信仰あるのね", face: "happy" },
+      { count: 10, line: "いい感じじゃない？", face: "happy" },
+      { count: 15, line: "もっと投げてもいいのよ？", face: "happy" },
+      { count: 20, line: "ふふっ、調子出てきたわ", face: "excited" },
+      { count: 25, line: "毎日来なさい", face: "excited" },
+      { count: 30, line: "神社の修理代が捗るわ", face: "happy" },
+      { count: 35, line: "まだまだよ", face: "angry" },
+      { count: 40, line: "そこまでやるなら巫女になれば？", face: "angry" },
+      { count: 45, line: "私に惚れた？…冗談よ", face: "excited" },
+      { count: 50, line: "信仰が暴走してるわね", face: "angry" },
+      { count: 60, line: "ちょっと真面目に嬉しいかも", face: "happy" },
+      { count: 75, line: "もう止まらないわね", face: "excited" },
+      { count: 90, line: "あんた霊夢専属信者でしょ", face: "happy" },
+      { count: 100, line: "今日の勝者はあなた！", face: "excited" },
+      { count: 150, line: "本殿を金ピカにしてやろうかしら", face: "angry" },
+      { count: 200, line: "神主にも見せてやりたいわね", face: "excited" },
+      { count: 300, line: "これはもう信仰じゃなくて愛ね", face: "happy" },
+      { count: 500, line: "あなたが神か…", face: "angry" },
+      { count: 1000, line: "信仰の化身。尊敬するわ", face: "angry" }
+    ];
+
+    function updateCPS() {
+      const now = Date.now();
+      clickTimes = clickTimes.filter(t => now - t < 1000);
+      cpsDiv.textContent = `CPS: ${clickTimes.length}`;
+    }
+
+    function throwCoin() {
+      const now = Date.now();
+      clickTimes.push(now);
+      updateCPS();
+
+      coinCount++;
+      coinSound.currentTime = 0;
+      coinSound.play();
+      coinCountDiv.textContent = `賽銭の数: ${coinCount}`;
+
+      let selectedLine = saisenLines[0];
+      for (let i = 0; i < saisenLines.length; i++) {
+        if (coinCount >= saisenLines[i].count) {
+          selectedLine = saisenLines[i];
+        } else {
+          break;
+        }
+      }
+
+      messageDiv.textContent = selectedLine.line;
+      reimuImg.src = reimuFaces[selectedLine.face];
+
+      // コインアニメーションの追加
+      const coin = document.createElement('div');
+      coin.classList.add('coin');
+      saisenBako.appendChild(coin);
+      setTimeout(() => {
+        coin.remove(); // アニメーション後にコインを削除
+      }, 1000);
+    }
+
+    // 長押し対策
+    coinButton.addEventListener("mousedown", (e) => {
+      if (Date.now() - lastTouch < 500) return;
+      throwCoin();
+    });
+
+    coinButton.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      lastTouch = Date.now();
+      throwCoin();
+    });
+
+    setInterval(updateCPS, 200);
+  </script>
+</body>
+</html>

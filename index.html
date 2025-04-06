@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>霊夢の賽銭ゲーム</title>
+  <title>配信中の霊夢に赤スパをゲーム</title>
   <style>
     body {
       text-align: center;
@@ -79,13 +79,12 @@
 </head>
 <body>
 
-  <h1>霊夢に賽銭を投げよう！</h1>
+  <h1>配信中の霊夢に赤スパを投げよう！</h1>
 
   <img id="reimu" src="reimu_normal.png" alt="霊夢の表情">
   <br>
-  <img id="saisenbako" src="saisen.png" alt="賽銭箱">
-
-  <div id="message">賽銭まだ？</div>
+  
+  <div id="message">おいガキ赤スパ投げろ</div>
   <button id="coin-button">賽銭を投げる！</button>
   <div id="coin-count">賽銭の数: 0</div>
   <div id="cps">CPS: 0</div>
@@ -119,26 +118,26 @@
     };
 
     const saisenLines = [
-      { count: 0, line: "賽銭まだ？", face: "normal" },
-      { count: 5, line: "ちょっとは信仰あるのね", face: "happy" },
-      { count: 10, line: "いい感じじゃない？", face: "happy" },
-      { count: 15, line: "もっと投げてもいいのよ？", face: "happy" },
-      { count: 20, line: "ふふっ、調子出てきたわ", face: "excited" },
-      { count: 25, line: "毎日来なさい", face: "excited" },
+      { count: 0, line: "おいガキ赤スパ投げろ", face: "normal" },
+      { count: 5, line: "もっと投げろ", face: "happy" },
+      { count: 10, line: "いい超しいじゃない♪このままいっぱい投げちゃいなさい！", face: "happy" },
+      { count: 15, line: "ふふ、霊夢様に貢ぐのがたのしくなってきたでしょ？", face: "happy" },
+      { count: 20, line: "あら、もう20回？...物足りないわね〜、もっと投げろ", face: "excited" },
+      { count: 25, line: "感謝はしてるわよ？でも手が止まってるんじゃない？", face: "excited" },
       { count: 30, line: "神社の修理代が捗るわ", face: "happy" },
       { count: 35, line: "まだまだよ", face: "angry" },
-      { count: 40, line: "そこまでやるなら巫女になれば？", face: "angry" },
+      { count: 40, line: "ここまできたら、あなたも信者確定ね♡", face: "angry" },
       { count: 45, line: "私に惚れた？…冗談よ", face: "excited" },
-      { count: 50, line: "信仰が暴走してるわね", face: "angry" },
-      { count: 60, line: "ちょっと真面目に嬉しいかも", face: "happy" },
-      { count: 75, line: "もう止まらないわね", face: "excited" },
-      { count: 90, line: "あんた霊夢専属信者でしょ", face: "happy" },
-      { count: 100, line: "今日の勝者はあなた！", face: "excited" },
+      { count: 50, line: "50回...！さすが、信抑心MAX！神社に自動送金機おきたいわ〜！", face: "angry" },
+      { count: 60, line: "んふふ〜、霊夢様のために働いてて偉い偉い♡", face: "happy" },
+      { count: 75, line: "ここまで来たらもう修行僧レベルね。あっぱれ！", face: "excited" },
+      { count: 90, line: "赤スパ90回...！凄すぎてお茶吹いたわ！", face: "happy" },
+      { count: 100, line: "もっと投げろ", face: "excited" },
       { count: 150, line: "本殿を金ピカにしてやろうかしら", face: "angry" },
       { count: 200, line: "神主にも見せてやりたいわね", face: "excited" },
       { count: 300, line: "これはもう信仰じゃなくて愛ね", face: "happy" },
       { count: 500, line: "あなたが神か…", face: "angry" },
-      { count: 1000, line: "信仰の化身。尊敬するわ", face: "angry" }
+      { count: 1000, line: "ここまできたら...えっちな画像見せてあげようか？", face: "angry" }
     ];
 
     function updateCPS() {
